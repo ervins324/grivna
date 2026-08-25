@@ -30,18 +30,19 @@ class UpcomingTimelineWidget extends ConsumerWidget {
                 children: [
                   Container(
                     padding: const EdgeInsets.all(6),
-                    decoration: const BoxDecoration(
-                      color: AppColors.surfaceElevated,
+                    decoration: BoxDecoration(
+                      color: AppColors.neonGreenSubtle,
                       shape: BoxShape.circle,
+                      boxShadow: AppColors.neonGlow(blur: 8, color: AppColors.neonGreenGlow),
                     ),
-                    child: const Icon(Icons.notifications_active_outlined, size: 14, color: AppColors.textPrimary),
+                    child: const Icon(Icons.notifications_active_outlined, size: 14, color: AppColors.neonGreen),
                   ),
                   const SizedBox(width: 8),
                   Text(
                     'PAYMENT REMINDERS TIMELINE',
                     style: AppTypography.bodySmall.copyWith(
-                      fontWeight: FontWeight.w600,
-                      letterSpacing: 1.2,
+                      fontWeight: FontWeight.w700,
+                      letterSpacing: 1.3,
                       color: AppColors.textTertiary,
                     ),
                   ),
@@ -77,15 +78,19 @@ class UpcomingTimelineWidget extends ConsumerWidget {
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        // Timeline Line & Dot
+                        // Timeline Line & Glowing Dot
                         Column(
                           children: [
                             Container(
                               width: 10,
                               height: 10,
                               decoration: BoxDecoration(
-                                color: isImminent ? AppColors.negative : AppColors.textPrimary,
+                                color: isImminent ? AppColors.negative : AppColors.neonGreen,
                                 shape: BoxShape.circle,
+                                boxShadow: AppColors.neonGlow(
+                                  blur: 8,
+                                  color: isImminent ? AppColors.negative : AppColors.neonGreen,
+                                ),
                               ),
                             ),
                             if (index < subs.length - 1)
@@ -132,15 +137,18 @@ class UpcomingTimelineWidget extends ConsumerWidget {
                                       decoration: BoxDecoration(
                                         color: isImminent
                                             ? AppColors.negativeMuted.withValues(alpha: 0.3)
-                                            : AppColors.surfaceElevated,
+                                            : AppColors.neonGreenSubtle,
                                         borderRadius: BorderRadius.circular(6),
+                                        border: isImminent
+                                            ? null
+                                            : Border.all(color: AppColors.neonBorder.withValues(alpha: 0.3)),
                                       ),
                                       child: Text(
                                         DateTimeUtils.formatDaysRemaining(sub.nextBillingDate),
                                         style: TextStyle(
                                           fontSize: 10,
                                           fontWeight: FontWeight.w600,
-                                          color: isImminent ? AppColors.negative : AppColors.textSecondary,
+                                          color: isImminent ? AppColors.negative : AppColors.neonGreen,
                                         ),
                                       ),
                                     ),
@@ -159,7 +167,7 @@ class UpcomingTimelineWidget extends ConsumerWidget {
             loading: () => const Center(
               child: Padding(
                 padding: EdgeInsets.all(24),
-                child: CircularProgressIndicator(strokeWidth: 2, color: AppColors.textPrimary),
+                child: CircularProgressIndicator(strokeWidth: 2, color: AppColors.neonGreen),
               ),
             ),
             error: (_, _) => const Text('Error loading timeline', style: TextStyle(color: AppColors.negative)),

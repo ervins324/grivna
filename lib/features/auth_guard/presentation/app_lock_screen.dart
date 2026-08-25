@@ -50,22 +50,23 @@ class _AppLockScreenState extends ConsumerState<AppLockScreen> {
         child: Column(
           children: [
             const Spacer(flex: 2),
-            // Logo / App Icon
+            // Glowing Neon Logo
             Container(
-              width: 64,
-              height: 64,
+              width: 72,
+              height: 72,
               decoration: BoxDecoration(
-                color: AppColors.surfaceElevated,
+                color: AppColors.surface,
                 shape: BoxShape.circle,
-                border: Border.all(color: AppColors.border),
+                border: Border.all(color: AppColors.neonGreen, width: 1.5),
+                boxShadow: AppColors.neonGlow(blur: 24, spread: 2, color: AppColors.neonGreenGlow),
               ),
               child: const Center(
                 child: Text(
                   '₴',
                   style: TextStyle(
-                    fontSize: 32,
+                    fontSize: 34,
                     fontWeight: FontWeight.bold,
-                    color: AppColors.textPrimary,
+                    color: AppColors.neonGreen,
                   ),
                 ),
               ),
@@ -82,22 +83,26 @@ class _AppLockScreenState extends ConsumerState<AppLockScreen> {
             ),
             const SizedBox(height: 32),
 
-            // PIN Dots
+            // Glowing PIN Dots
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: List.generate(_pinLength, (index) {
                 final isFilled = index < _enteredPin.length;
-                return Container(
-                  margin: const EdgeInsets.symmetric(horizontal: 8),
+                return AnimatedContainer(
+                  duration: const Duration(milliseconds: 180),
+                  margin: const EdgeInsets.symmetric(horizontal: 10),
                   width: 16,
                   height: 16,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: isFilled ? AppColors.textPrimary : Colors.transparent,
+                    color: isFilled ? AppColors.neonGreen : Colors.transparent,
                     border: Border.all(
-                      color: isFilled ? AppColors.textPrimary : AppColors.textTertiary,
+                      color: isFilled ? AppColors.neonGreen : AppColors.textTertiary,
                       width: 2,
                     ),
+                    boxShadow: isFilled
+                        ? AppColors.neonGlow(blur: 14, color: AppColors.neonGreen)
+                        : null,
                   ),
                 );
               }),
@@ -139,6 +144,7 @@ class _AppLockScreenState extends ConsumerState<AppLockScreen> {
                       if (authState.isBiometricsAvailable)
                         _buildActionButton(
                           Icons.fingerprint,
+                          color: AppColors.neonGreen,
                           onTap: () => ref.read(authGuardProvider.notifier).unlockWithBiometrics(),
                         )
                       else
@@ -149,6 +155,7 @@ class _AppLockScreenState extends ConsumerState<AppLockScreen> {
                       ),
                       _buildActionButton(
                         Icons.backspace_outlined,
+                        color: AppColors.textSecondary,
                         onTap: _onDelete,
                       ),
                     ],
@@ -189,7 +196,7 @@ class _AppLockScreenState extends ConsumerState<AppLockScreen> {
     );
   }
 
-  Widget _buildActionButton(IconData icon, {required VoidCallback onTap}) {
+  Widget _buildActionButton(IconData icon, {required Color color, required VoidCallback onTap}) {
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(36),
@@ -197,12 +204,12 @@ class _AppLockScreenState extends ConsumerState<AppLockScreen> {
         width: 72,
         height: 72,
         decoration: BoxDecoration(
-          color: Colors.transparent,
+          color: AppColors.surface,
           shape: BoxShape.circle,
           border: Border.all(color: AppColors.borderSubtle),
         ),
         child: Center(
-          child: Icon(icon, color: AppColors.textPrimary, size: 26),
+          child: Icon(icon, color: color, size: 26),
         ),
       ),
     );

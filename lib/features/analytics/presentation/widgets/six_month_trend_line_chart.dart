@@ -31,14 +31,14 @@ class SixMonthTrendLineChart extends ConsumerWidget {
               Text(
                 '6-MONTH SPENDING TREND',
                 style: AppTypography.bodySmall.copyWith(
-                  fontWeight: FontWeight.w600,
-                  letterSpacing: 1.2,
+                  fontWeight: FontWeight.w700,
+                  letterSpacing: 1.3,
                   color: AppColors.textTertiary,
                 ),
               ),
               Row(
                 children: [
-                  _buildLegend(AppColors.positive, 'Income'),
+                  _buildLegend(AppColors.neonGreen, 'Income'),
                   const SizedBox(width: 12),
                   _buildLegend(AppColors.negative, 'Expense'),
                 ],
@@ -138,7 +138,7 @@ class SixMonthTrendLineChart extends ConsumerWidget {
                             return LineTooltipItem(
                               '${isIncome ? 'Income' : 'Expense'}: ${CurrencyFormatter.format(spot.y, currency: baseCurrency, showDecimals: false)}',
                               TextStyle(
-                                color: isIncome ? AppColors.positive : AppColors.negative,
+                                color: isIncome ? AppColors.neonGreen : AppColors.negative,
                                 fontWeight: FontWeight.bold,
                                 fontSize: 11,
                               ),
@@ -148,18 +148,25 @@ class SixMonthTrendLineChart extends ConsumerWidget {
                       ),
                     ),
                     lineBarsData: [
-                      // Income Line
+                      // Income Line (Soft neon green with diffuse glowing fill)
                       LineChartBarData(
                         spots: incomeSpots,
                         isCurved: true,
                         curveSmoothness: 0.35,
-                        color: AppColors.positive,
-                        barWidth: 2.5,
+                        color: AppColors.neonGreen,
+                        barWidth: 2.8,
                         isStrokeCapRound: true,
                         dotData: const FlDotData(show: false),
                         belowBarData: BarAreaData(
                           show: true,
-                          color: AppColors.positive.withValues(alpha: 0.08),
+                          gradient: LinearGradient(
+                            begin: Alignment.topCenter,
+                            end: Alignment.bottomCenter,
+                            colors: [
+                              AppColors.neonGreen.withValues(alpha: 0.22),
+                              AppColors.neonGreen.withValues(alpha: 0.0),
+                            ],
+                          ),
                         ),
                       ),
                       // Expense Line
@@ -168,12 +175,19 @@ class SixMonthTrendLineChart extends ConsumerWidget {
                         isCurved: true,
                         curveSmoothness: 0.35,
                         color: AppColors.negative,
-                        barWidth: 2.5,
+                        barWidth: 2.2,
                         isStrokeCapRound: true,
                         dotData: const FlDotData(show: false),
                         belowBarData: BarAreaData(
                           show: true,
-                          color: AppColors.negative.withValues(alpha: 0.08),
+                          gradient: LinearGradient(
+                            begin: Alignment.topCenter,
+                            end: Alignment.bottomCenter,
+                            colors: [
+                              AppColors.negative.withValues(alpha: 0.15),
+                              AppColors.negative.withValues(alpha: 0.0),
+                            ],
+                          ),
                         ),
                       ),
                     ],
@@ -184,10 +198,10 @@ class SixMonthTrendLineChart extends ConsumerWidget {
             loading: () => const Center(
               child: Padding(
                 padding: EdgeInsets.all(32),
-                child: CircularProgressIndicator(strokeWidth: 2, color: AppColors.textPrimary),
+                child: CircularProgressIndicator(strokeWidth: 2, color: AppColors.neonGreen),
               ),
             ),
-            error: (e, _) => Center(
+            error: (e, _) => const Center(
               child: Text('Error loading trend', style: TextStyle(color: AppColors.negative)),
             ),
           ),
@@ -202,9 +216,13 @@ class SixMonthTrendLineChart extends ConsumerWidget {
         Container(
           width: 8,
           height: 8,
-          decoration: BoxDecoration(color: color, shape: BoxShape.circle),
+          decoration: BoxDecoration(
+            color: color,
+            shape: BoxShape.circle,
+            boxShadow: color == AppColors.neonGreen ? AppColors.neonGlow(blur: 6, color: color) : null,
+          ),
         ),
-        const SizedBox(width: 4),
+        const SizedBox(width: 6),
         Text(label, style: const TextStyle(fontSize: 11, color: AppColors.textSecondary)),
       ],
     );

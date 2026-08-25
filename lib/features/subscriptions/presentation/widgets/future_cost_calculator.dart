@@ -32,18 +32,19 @@ class FutureCostCalculator extends ConsumerWidget {
                 children: [
                   Container(
                     padding: const EdgeInsets.all(6),
-                    decoration: const BoxDecoration(
-                      color: AppColors.surfaceElevated,
+                    decoration: BoxDecoration(
+                      color: AppColors.neonGreenSubtle,
                       shape: BoxShape.circle,
+                      boxShadow: AppColors.neonGlow(blur: 8, color: AppColors.neonGreenGlow),
                     ),
-                    child: const Icon(Icons.auto_graph, size: 14, color: AppColors.transfer),
+                    child: const Icon(Icons.auto_graph, size: 14, color: AppColors.neonGreen),
                   ),
                   const SizedBox(width: 8),
                   Text(
                     'FUTURE COST PROJECTION',
                     style: AppTypography.bodySmall.copyWith(
-                      fontWeight: FontWeight.w600,
-                      letterSpacing: 1.2,
+                      fontWeight: FontWeight.w700,
+                      letterSpacing: 1.3,
                       color: AppColors.textTertiary,
                     ),
                   ),
@@ -52,12 +53,13 @@ class FutureCostCalculator extends ConsumerWidget {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                 decoration: BoxDecoration(
-                  color: AppColors.surfaceElevated,
+                  color: AppColors.neonGreenSubtle,
                   borderRadius: BorderRadius.circular(6),
+                  border: Border.all(color: AppColors.neonBorder.withValues(alpha: 0.3)),
                 ),
                 child: const Text(
                   'Simulation',
-                  style: TextStyle(fontSize: 10, color: AppColors.textTertiary),
+                  style: TextStyle(fontSize: 10, fontWeight: FontWeight.w600, color: AppColors.neonGreen),
                 ),
               ),
             ],
@@ -79,7 +81,17 @@ class FutureCostCalculator extends ConsumerWidget {
                       decoration: BoxDecoration(
                         color: isSelected ? AppColors.textPrimary : AppColors.surfaceElevated,
                         borderRadius: BorderRadius.circular(12),
-                        border: Border.all(color: AppColors.border),
+                        border: Border.all(
+                          color: isSelected ? AppColors.neonBorder.withValues(alpha: 0.6) : AppColors.border,
+                        ),
+                        boxShadow: isSelected
+                            ? [
+                                BoxShadow(
+                                  color: Colors.white.withValues(alpha: 0.15),
+                                  blurRadius: 10,
+                                ),
+                              ]
+                            : null,
                       ),
                       child: Center(
                         child: Text(
@@ -210,7 +222,7 @@ class FutureCostCalculator extends ConsumerWidget {
             loading: () => const Center(
               child: Padding(
                 padding: EdgeInsets.all(24),
-                child: CircularProgressIndicator(strokeWidth: 2, color: AppColors.textPrimary),
+                child: CircularProgressIndicator(strokeWidth: 2, color: AppColors.neonGreen),
               ),
             ),
             error: (_, _) => const Text('Error calculating projection', style: TextStyle(color: AppColors.negative)),

@@ -31,8 +31,8 @@ class DailySpendingBarChart extends ConsumerWidget {
               Text(
                 'DAILY SPENDING (THIS MONTH)',
                 style: AppTypography.bodySmall.copyWith(
-                  fontWeight: FontWeight.w600,
-                  letterSpacing: 1.2,
+                  fontWeight: FontWeight.w700,
+                  letterSpacing: 1.3,
                   color: AppColors.textTertiary,
                 ),
               ),
@@ -71,7 +71,7 @@ class DailySpendingBarChart extends ConsumerWidget {
                           return BarTooltipItem(
                             'Day $dayNum: ${CurrencyFormatter.format(rod.toY, currency: baseCurrency, showDecimals: false)}',
                             const TextStyle(
-                              color: AppColors.textPrimary,
+                              color: AppColors.neonGreen,
                               fontWeight: FontWeight.bold,
                               fontSize: 11,
                             ),
@@ -117,7 +117,9 @@ class DailySpendingBarChart extends ConsumerWidget {
                         barRods: [
                           BarChartRodData(
                             toY: isZero ? (maxY * 0.02) : item.amount,
-                            color: isZero ? AppColors.surfaceElevated : AppColors.textPrimary,
+                            color: isZero
+                                ? AppColors.surfaceElevated
+                                : (i % 2 == 0 ? AppColors.neonGreen : AppColors.textPrimary),
                             width: 5,
                             borderRadius: BorderRadius.circular(2),
                           ),
@@ -131,10 +133,10 @@ class DailySpendingBarChart extends ConsumerWidget {
             loading: () => const Center(
               child: Padding(
                 padding: EdgeInsets.all(32),
-                child: CircularProgressIndicator(strokeWidth: 2, color: AppColors.textPrimary),
+                child: CircularProgressIndicator(strokeWidth: 2, color: AppColors.neonGreen),
               ),
             ),
-            error: (e, _) => Center(
+            error: (e, _) => const Center(
               child: Text('Error loading chart', style: TextStyle(color: AppColors.negative)),
             ),
           ),

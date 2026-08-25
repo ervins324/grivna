@@ -31,14 +31,14 @@ class IncomeExpenseBarChart extends ConsumerWidget {
               Text(
                 'INCOME VS EXPENSE',
                 style: AppTypography.bodySmall.copyWith(
-                  fontWeight: FontWeight.w600,
-                  letterSpacing: 1.2,
+                  fontWeight: FontWeight.w700,
+                  letterSpacing: 1.3,
                   color: AppColors.textTertiary,
                 ),
               ),
               Row(
                 children: [
-                  _buildLegend(AppColors.positive, 'Income'),
+                  _buildLegend(AppColors.neonGreen, 'Income'),
                   const SizedBox(width: 12),
                   _buildLegend(AppColors.negative, 'Expense'),
                 ],
@@ -78,7 +78,7 @@ class IncomeExpenseBarChart extends ConsumerWidget {
                           return BarTooltipItem(
                             '${isIncome ? 'In' : 'Out'}: ${CurrencyFormatter.format(rod.toY, currency: baseCurrency, showDecimals: false)}',
                             TextStyle(
-                              color: isIncome ? AppColors.positive : AppColors.negative,
+                              color: isIncome ? AppColors.neonGreen : AppColors.negative,
                               fontWeight: FontWeight.bold,
                               fontSize: 11,
                             ),
@@ -123,13 +123,10 @@ class IncomeExpenseBarChart extends ConsumerWidget {
                         ),
                       ),
                     ),
-                    gridData: FlGridData(
+                    gridData: const FlGridData(
                       show: true,
                       drawVerticalLine: false,
-                      getDrawingHorizontalLine: (value) => const FlLine(
-                        color: AppColors.borderSubtle,
-                        strokeWidth: 1,
-                      ),
+                      getDrawingHorizontalLine: _getGridLine,
                     ),
                     borderData: FlBorderData(show: false),
                     barGroups: List.generate(items.length, (i) {
@@ -140,7 +137,7 @@ class IncomeExpenseBarChart extends ConsumerWidget {
                         barRods: [
                           BarChartRodData(
                             toY: item.income,
-                            color: AppColors.positive,
+                            color: AppColors.neonGreen,
                             width: 10,
                             borderRadius: const BorderRadius.vertical(top: Radius.circular(4)),
                           ),
@@ -160,10 +157,10 @@ class IncomeExpenseBarChart extends ConsumerWidget {
             loading: () => const Center(
               child: Padding(
                 padding: EdgeInsets.all(32),
-                child: CircularProgressIndicator(strokeWidth: 2, color: AppColors.textPrimary),
+                child: CircularProgressIndicator(strokeWidth: 2, color: AppColors.neonGreen),
               ),
             ),
-            error: (e, _) => Center(
+            error: (e, _) => const Center(
               child: Text('Error loading chart', style: TextStyle(color: AppColors.negative)),
             ),
           ),
@@ -172,13 +169,22 @@ class IncomeExpenseBarChart extends ConsumerWidget {
     );
   }
 
+  static FlLine _getGridLine(double value) => const FlLine(
+        color: AppColors.borderSubtle,
+        strokeWidth: 1,
+      );
+
   Widget _buildLegend(Color color, String label) {
     return Row(
       children: [
         Container(
           width: 8,
           height: 8,
-          decoration: BoxDecoration(color: color, shape: BoxShape.circle),
+          decoration: BoxDecoration(
+            color: color,
+            shape: BoxShape.circle,
+            boxShadow: color == AppColors.neonGreen ? AppColors.neonGlow(blur: 6, color: color) : null,
+          ),
         ),
         const SizedBox(width: 4),
         Text(label, style: const TextStyle(fontSize: 11, color: AppColors.textSecondary)),

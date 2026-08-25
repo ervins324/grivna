@@ -31,21 +31,36 @@ class AccountCardsCarousel extends ConsumerWidget {
               Text(
                 'ACCOUNTS',
                 style: AppTypography.bodySmall.copyWith(
-                  fontWeight: FontWeight.w600,
-                  letterSpacing: 1.2,
+                  fontWeight: FontWeight.w700,
+                  letterSpacing: 1.3,
                   color: AppColors.textTertiary,
                 ),
               ),
               if (selectedFilter != null)
                 InkWell(
                   onTap: () => ref.read(selectedAccountFilterProvider.notifier).setFilter(null),
-                  child: const Text(
-                    'Clear filter (Show all)',
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: AppColors.transfer,
-                      fontWeight: FontWeight.w500,
-                    ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Container(
+                        width: 6,
+                        height: 6,
+                        decoration: BoxDecoration(
+                          color: AppColors.neonGreen,
+                          shape: BoxShape.circle,
+                          boxShadow: AppColors.neonGlow(blur: 6, color: AppColors.neonGreen),
+                        ),
+                      ),
+                      const SizedBox(width: 6),
+                      const Text(
+                        'Clear filter (Show all)',
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: AppColors.neonGreen,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
             ],
@@ -74,10 +89,10 @@ class AccountCardsCarousel extends ConsumerWidget {
               child: SizedBox(
                 width: 24,
                 height: 24,
-                child: CircularProgressIndicator(strokeWidth: 2, color: AppColors.textPrimary),
+                child: CircularProgressIndicator(strokeWidth: 2, color: AppColors.neonGreen),
               ),
             ),
-            error: (e, _) => Center(
+            error: (e, _) => const Center(
               child: Text('Error loading accounts', style: TextStyle(color: AppColors.negative)),
             ),
           ),
@@ -97,16 +112,16 @@ class AccountCardsCarousel extends ConsumerWidget {
     IconData typeIcon = Icons.account_balance_wallet;
 
     if (account.type == 'monobank') {
-      brandColor = const Color(0xFF1F1F1F);
+      brandColor = const Color(0xFF151518);
       typeIcon = Icons.credit_card;
     } else if (account.type == 'bybit') {
-      brandColor = const Color(0xFF221C11);
+      brandColor = const Color(0xFF1E180E);
       typeIcon = Icons.currency_bitcoin;
     } else if (account.type == 'cash') {
-      brandColor = const Color(0xFF0D2818);
+      brandColor = const Color(0xFF091E13);
       typeIcon = Icons.payments_outlined;
     } else if (account.type == 'manual') {
-      brandColor = const Color(0xFF1E1735);
+      brandColor = const Color(0xFF181326);
       typeIcon = Icons.lock_outline;
     }
 
@@ -127,9 +142,12 @@ class AccountCardsCarousel extends ConsumerWidget {
           color: brandColor,
           borderRadius: BorderRadius.circular(20),
           border: Border.all(
-            color: isSelected ? AppColors.textPrimary : AppColors.border,
-            width: isSelected ? 2 : 1,
+            color: isSelected ? AppColors.neonGreen : AppColors.border,
+            width: isSelected ? 1.8 : 1,
           ),
+          boxShadow: isSelected
+              ? AppColors.neonGlow(blur: 16, color: AppColors.neonGreenGlow)
+              : null,
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -141,15 +159,15 @@ class AccountCardsCarousel extends ConsumerWidget {
               children: [
                 Row(
                   children: [
-                    Icon(typeIcon, size: 16, color: AppColors.textSecondary),
+                    Icon(typeIcon, size: 16, color: isSelected ? AppColors.neonGreen : AppColors.textSecondary),
                     const SizedBox(width: 6),
                     Text(
                       account.type.toUpperCase(),
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 10,
                         fontWeight: FontWeight.w700,
                         letterSpacing: 1.0,
-                        color: AppColors.textTertiary,
+                        color: isSelected ? AppColors.neonGreen : AppColors.textTertiary,
                       ),
                     ),
                   ],
@@ -158,9 +176,10 @@ class AccountCardsCarousel extends ConsumerWidget {
                   Container(
                     width: 7,
                     height: 7,
-                    decoration: const BoxDecoration(
-                      color: AppColors.positive,
+                    decoration: BoxDecoration(
+                      color: AppColors.neonGreen,
                       shape: BoxShape.circle,
+                      boxShadow: AppColors.neonGlow(blur: 6, color: AppColors.neonGreen),
                     ),
                   ),
               ],

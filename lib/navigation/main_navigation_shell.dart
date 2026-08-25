@@ -41,11 +41,18 @@ class _MainNavigationShellState extends ConsumerState<MainNavigationShell> {
         children: _screens,
       ),
       bottomNavigationBar: Container(
-        decoration: const BoxDecoration(
+        decoration: BoxDecoration(
           color: AppColors.surface,
-          border: Border(
+          border: const Border(
             top: BorderSide(color: AppColors.borderSubtle, width: 1),
           ),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.4),
+              blurRadius: 16,
+              offset: const Offset(0, -4),
+            ),
+          ],
         ),
         child: SafeArea(
           child: Padding(
@@ -72,11 +79,18 @@ class _MainNavigationShellState extends ConsumerState<MainNavigationShell> {
       onTap: () => setState(() => _currentIndex = index),
       borderRadius: BorderRadius.circular(16),
       child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
+        duration: const Duration(milliseconds: 220),
+        curve: Curves.easeOutCubic,
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
         decoration: BoxDecoration(
-          color: isSelected ? AppColors.surfaceElevated : Colors.transparent,
+          color: isSelected ? AppColors.neonGreenSubtle : Colors.transparent,
           borderRadius: BorderRadius.circular(16),
+          border: isSelected
+              ? Border.all(color: AppColors.neonBorder.withValues(alpha: 0.4), width: 1)
+              : null,
+          boxShadow: isSelected
+              ? AppColors.neonGlow(blur: 14, color: AppColors.neonGreenGlow.withValues(alpha: 0.15))
+              : null,
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
@@ -84,7 +98,7 @@ class _MainNavigationShellState extends ConsumerState<MainNavigationShell> {
             Icon(
               isSelected ? filledIcon : outlineIcon,
               size: 20,
-              color: isSelected ? AppColors.textPrimary : AppColors.textTertiary,
+              color: isSelected ? AppColors.neonGreen : AppColors.textTertiary,
             ),
             if (isSelected) ...[
               const SizedBox(width: 8),
@@ -92,8 +106,20 @@ class _MainNavigationShellState extends ConsumerState<MainNavigationShell> {
                 label,
                 style: const TextStyle(
                   fontSize: 12,
-                  fontWeight: FontWeight.w600,
+                  fontWeight: FontWeight.w700,
                   color: AppColors.textPrimary,
+                  letterSpacing: -0.2,
+                ),
+              ),
+              const SizedBox(width: 4),
+              // Soft glowing micro indicator dot
+              Container(
+                width: 4,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: AppColors.neonGreen,
+                  shape: BoxShape.circle,
+                  boxShadow: AppColors.neonGlow(blur: 4, color: AppColors.neonGreen),
                 ),
               ),
             ],
