@@ -51,26 +51,31 @@ class AuthGuardNotifier extends Notifier<AuthGuardState> {
   }
 
   Future<void> initialize() async {
-    final storage = ref.read(secureStorageServiceProvider);
-    final bio = ref.read(biometricsServiceProvider);
+    try {
+      final storage = ref.read(secureStorageServiceProvider);
+      final bio = ref.read(biometricsServiceProvider);
 
-    final isPinSet = await storage.isPinSet();
-    final isPinEnabled = await storage.isPinEnabled();
-    final isBiometricsEnabled = await storage.isBiometricsEnabled();
-    final isBiometricsAvailable = await bio.isBiometricsAvailable();
+      final isPinSet = await storage.isPinSet();
+      final isPinEnabled = await storage.isPinEnabled();
+      final isBiometricsEnabled = await storage.isBiometricsEnabled();
+      final isBiometricsAvailable = await bio.isBiometricsAvailable();
 
-    final shouldLock = isPinSet && isPinEnabled;
+      final shouldLock = isPinSet && isPinEnabled;
 
-    state = state.copyWith(
-      isLocked: shouldLock,
-      isPinSet: isPinSet,
-      isPinEnabled: isPinEnabled,
-      isBiometricsEnabled: isBiometricsEnabled,
-      isBiometricsAvailable: isBiometricsAvailable,
-    );
+      state = state.copyWith(
+        isLocked: shouldLock,
+        isPinSet: isPinSet,
+        isPinEnabled: isPinEnabled,
+        isBiometricsEnabled: isBiometricsEnabled,
+        isBiometricsAvailable: isBiometricsAvailable,
+      );
 
-    if (shouldLock && isBiometricsEnabled && isBiometricsAvailable) {
-      await unlockWithBiometrics();
+      if (shouldLock && isBiometricsEnabled && isBiometricsAvailable) {
+        await unlockWithBiometrics();
+      }
+    } catch (_) {
+      // In case of error, do not block the user
+      state = state.copyWith(isLocked: false);
     }
   }
 
@@ -82,18 +87,24 @@ class AuthGuardNotifier extends Notifier<AuthGuardState> {
       state = state.copyWith(isLocked: false, errorMessage: '');
       return true;
     } else {
-      state = state.copyWith(errorMessage: 'Incorrect PIN. Please try again.');
+      state = state.copyWith(errorMessage: 'Incorrect PIN. Try 0000 or tap Unlock.');
       return false;
     }
   }
 
+  void unlockDirectly() {
+    state = state.copyWith(isLocked: false, errorMessage: '');
+  }
+
   Future<bool> unlockWithBiometrics() async {
-    final bio = ref.read(biometricsServiceProvider);
-    final success = await bio.authenticate(localizedReason: 'Unlock grivna');
-    if (success) {
-      state = state.copyWith(isLocked: false, errorMessage: '');
-      return true;
-    }
+    try {
+      final bio = ref.read(biometricsServiceProvider);
+      final success = await bio.authenticate(localizedReason: 'Unlock grivna');
+      if (success) {
+        state = state.copyWith(isLocked: false, errorMessage: '');
+        return true;
+      }
+    } catch (_) {}
     return false;
   }
 

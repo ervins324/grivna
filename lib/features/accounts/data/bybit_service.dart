@@ -25,13 +25,13 @@ class BybitWalletBalance {
       );
     }
 
-    final accountData = list.first as Map<String, dynamic>;
+    final accountData = Map<String, dynamic>.from(list.first as Map);
     final equity = double.tryParse(accountData['totalEquity']?.toString() ?? '0') ?? 0.0;
     final walletBal = double.tryParse(accountData['totalWalletBalance']?.toString() ?? '0') ?? 0.0;
 
     final coinsList = (accountData['coin'] as List<dynamic>?) ?? [];
     final coins = coinsList
-        .map((c) => BybitCoinBalance.fromJson(c as Map<String, dynamic>))
+        .map((c) => BybitCoinBalance.fromJson(Map<String, dynamic>.from(c as Map)))
         .toList();
 
     return BybitWalletBalance(
@@ -139,7 +139,7 @@ class BybitService {
         ),
       );
 
-      final data = response.data as Map<String, dynamic>;
+      final data = Map<String, dynamic>.from(response.data as Map);
       final retCode = data['retCode'] as int? ?? -1;
       if (retCode != 0) {
         throw Exception(data['retMsg'] ?? 'Bybit API error $retCode');
@@ -183,10 +183,10 @@ class BybitService {
         ),
       );
 
-      final data = response.data as Map<String, dynamic>;
+      final data = Map<String, dynamic>.from(response.data as Map);
       final list = (data['result']?['list'] as List<dynamic>?) ?? [];
       return list
-          .map((item) => BybitTransaction.fromJson(item as Map<String, dynamic>))
+          .map((item) => BybitTransaction.fromJson(Map<String, dynamic>.from(item as Map)))
           .toList();
     } catch (e) {
       return [];

@@ -39,12 +39,16 @@ class _GrivnaAppState extends ConsumerState<GrivnaApp> {
     super.initState();
     // Background init: seed default demo data if first launch and sync live rates
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      final repo = ref.read(accountRepositoryProvider);
-      final accounts = await repo.getAllAccounts();
-      if (accounts.isEmpty) {
-        await repo.seedDemoData();
+      try {
+        final repo = ref.read(accountRepositoryProvider);
+        final accounts = await repo.getAllAccounts();
+        if (accounts.isEmpty) {
+          await repo.seedDemoData();
+        }
+        await ref.read(syncNotifierProvider.notifier).syncAll();
+      } catch (e) {
+        debugPrint('App startup init error: $e');
       }
-      ref.read(syncNotifierProvider.notifier).syncAll();
     });
   }
 
@@ -57,9 +61,9 @@ class _GrivnaAppState extends ConsumerState<GrivnaApp> {
       darkTheme: ThemeData(
         brightness: Brightness.dark,
         scaffoldBackgroundColor: AppColors.background,
-        primaryColor: AppColors.textPrimary,
+        primaryColor: AppColors.neonGreen,
         colorScheme: const ColorScheme.dark(
-          primary: AppColors.textPrimary,
+          primary: AppColors.neonGreen,
           secondary: AppColors.textSecondary,
           surface: AppColors.surface,
         ),

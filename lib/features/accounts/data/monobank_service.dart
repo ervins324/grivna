@@ -66,7 +66,7 @@ class MonobankClientInfo {
       clientId: json['clientId'] as String? ?? '',
       name: json['name'] as String? ?? '',
       accounts: accountsJson
-          .map((e) => MonobankAccountInfo.fromJson(e as Map<String, dynamic>))
+          .map((e) => MonobankAccountInfo.fromJson(Map<String, dynamic>.from(e as Map)))
           .toList(),
     );
   }
@@ -125,7 +125,7 @@ class MonobankService {
           headers: {'X-Token': apiToken},
         ),
       );
-      return MonobankClientInfo.fromJson(response.data as Map<String, dynamic>);
+      return MonobankClientInfo.fromJson(Map<String, dynamic>.from(response.data as Map));
     } catch (e) {
       throw Exception('Failed to connect to Monobank: $e');
     }
@@ -152,7 +152,7 @@ class MonobankService {
 
       final list = (response.data as List<dynamic>?) ?? [];
       return list
-          .map((item) => MonobankStatementItem.fromJson(item as Map<String, dynamic>))
+          .map((item) => MonobankStatementItem.fromJson(Map<String, dynamic>.from(item as Map)))
           .toList();
     } catch (e) {
       throw Exception('Failed to fetch Monobank statement: $e');
@@ -164,7 +164,7 @@ class MonobankService {
     try {
       final response = await _dio.get(ApiEndpoints.monobankCurrency);
       final list = (response.data as List<dynamic>?) ?? [];
-      return list.cast<Map<String, dynamic>>();
+      return list.map((item) => Map<String, dynamic>.from(item as Map)).toList();
     } catch (e) {
       return [];
     }

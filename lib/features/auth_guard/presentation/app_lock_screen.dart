@@ -78,7 +78,7 @@ class _AppLockScreenState extends ConsumerState<AppLockScreen> {
             ),
             const SizedBox(height: 8),
             Text(
-              'Enter PIN to unlock',
+              authState.isPinSet ? 'Enter PIN to unlock' : 'Default PIN: 0000',
               style: AppTypography.bodyMedium,
             ),
             const SizedBox(height: 32),
@@ -116,6 +116,19 @@ class _AppLockScreenState extends ConsumerState<AppLockScreen> {
               ),
             ],
 
+            const SizedBox(height: 16),
+            // Quick bypass / unlock button for convenience
+            TextButton.icon(
+              onPressed: () {
+                ref.read(authGuardProvider.notifier).unlockDirectly();
+              },
+              icon: const Icon(Icons.lock_open, size: 16, color: AppColors.neonGreen),
+              label: const Text(
+                'Unlock App',
+                style: TextStyle(color: AppColors.neonGreen, fontWeight: FontWeight.w600, fontSize: 13),
+              ),
+            ),
+
             const Spacer(flex: 2),
 
             // Custom Keypad
@@ -148,7 +161,11 @@ class _AppLockScreenState extends ConsumerState<AppLockScreen> {
                           onTap: () => ref.read(authGuardProvider.notifier).unlockWithBiometrics(),
                         )
                       else
-                        const SizedBox(width: 72, height: 72),
+                        _buildActionButton(
+                          Icons.lock_open,
+                          color: AppColors.textTertiary,
+                          onTap: () => ref.read(authGuardProvider.notifier).unlockDirectly(),
+                        ),
                       _buildKeypadButton(
                         '0',
                         onTap: () => _onDigitPressed('0'),
