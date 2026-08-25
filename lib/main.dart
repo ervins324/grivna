@@ -1,20 +1,80 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'core/constants/app_colors.dart';
+import 'features/accounts/providers/account_providers.dart';
+import 'features/settings/providers/settings_provider.dart';
+import 'navigation/main_navigation_shell.dart';
 
-void main() {
-  runApp(const MainApp());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  // Set immersive dark system UI overlay
+  SystemChrome.setSystemUIOverlayStyle(
+    const SystemUiOverlayStyle(
+      statusBarColor: Colors.transparent,
+      statusBarIconBrightness: Brightness.light,
+      systemNavigationBarColor: AppColors.background,
+      systemNavigationBarIconBrightness: Brightness.light,
+    ),
+  );
+
+  runApp(
+    const ProviderScope(
+      child: GrivnaApp(),
+    ),
+  );
 }
 
-class MainApp extends StatelessWidget {
-  const MainApp({super.key});
+class GrivnaApp extends ConsumerStatefulWidget {
+  const GrivnaApp({super.key});
+
+  @override
+  ConsumerState<GrivnaApp> createState() => _GrivnaAppState();
+}
+
+class _GrivnaAppState extends ConsumerState<GrivnaApp> {
+  @override
+  void initState() {
+    super.initState();
+    // Background init: seed default demo data if first launch and sync live rates
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      final repo = ref.read(accountRepositoryProvider);
+      final accounts = await repo.getAllAccounts();
+      if (accounts.isEmpty) {
+        await repo.seedDemoData();
+      }
+      ref.read(syncNotifierProvider.notifier).syncAll();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: Scaffold(
-        body: Center(
-          child: Text('Hello World!'),
+    return MaterialApp(
+      title: 'grivna',
+      debugShowCheckedModeBanner: false,
+      themeMode: ThemeMode.dark,
+      darkTheme: ThemeData(
+        brightness: Brightness.dark,
+        scaffoldBackgroundColor: AppColors.background,
+        primaryColor: AppColors.textPrimary,
+        colorScheme: const ColorScheme.dark(
+          primary: AppColors.textPrimary,
+          secondary: AppColors.textSecondary,
+          surface: AppColors.surface,
+        ),
+        appBarTheme: const AppBarTheme(
+          backgroundColor: AppColors.background,
+          elevation: 0,
+          scrolledUnderElevation: 0,
+          iconTheme: IconThemeData(color: AppColors.textPrimary),
+        ),
+        dividerTheme: const DividerThemeData(
+          color: AppColors.borderSubtle,
+          thickness: 1,
         ),
       ),
+      home: const MainNavigationShell(),
     );
   }
 }

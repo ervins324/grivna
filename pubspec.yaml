@@ -1,5 +1,5 @@
 name: grivna
-description: "A new Flutter project."
+description: "A minimalist, high-performance personal finance tracking app."
 publish_to: 'none'
 version: 0.1.0+1
 
@@ -9,11 +9,28 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  flutter_riverpod: ^3.3.2
+  drift: ^2.24.2
+  drift_flutter: ^0.3.1
+  sqlite3_flutter_libs: ^0.6.0+eol
+  path_provider: ^2.1.5
+  path: ^1.9.1
+  flutter_secure_storage: ^11.0.0
+  fl_chart: ^1.2.0
+  dio: ^5.8.0+1
+  local_auth: ^3.0.2
+  intl: ^0.20.2
+  uuid: ^4.5.1
+  crypto: ^3.0.6
+  shared_preferences: ^2.5.2
+  google_fonts: ^8.2.1
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^6.0.0
+  build_runner: ^2.4.15
+  drift_dev: ^2.24.2
 
 flutter:
   uses-material-design: true
