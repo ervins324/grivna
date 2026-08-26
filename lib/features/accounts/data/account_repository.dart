@@ -103,6 +103,18 @@ class AccountRepository {
     await (_db.delete(_db.transactionsTable)..where((tbl) => tbl.accountId.equals(id))).go();
   }
 
+  Future<void> clearAllData() async {
+    final accounts = await getAllAccounts();
+    for (final acc in accounts) {
+      await _secureStorage.deleteSecret('mono_${acc.id}');
+      await _secureStorage.deleteSecret('bybit_key_${acc.id}');
+      await _secureStorage.deleteSecret('bybit_secret_${acc.id}');
+    }
+    await _db.delete(_db.transactionsTable).go();
+    await _db.delete(_db.subscriptionsTable).go();
+    await _db.delete(_db.accountsTable).go();
+  }
+
   // ---------------------------------------------------------------------------
   // Transactions CRUD & Transfers
   // ---------------------------------------------------------------------------
@@ -298,14 +310,15 @@ class AccountRepository {
 
       await updateAccountBalance(accountId, monoAcc.balance);
 
-      // Fetch recent 30-day transactions
+      // Fetch extended transactions (up to 365 days in 30-day windows)
       final now = DateTime.now();
-      final from = now.subtract(const Duration(days: 30));
-      final statements = await _monobankService.getStatement(
+      final from = now.subtract(const Duration(days: 365));
+      final statements = await _monobankService.getExtendedStatement(
         apiToken: token,
         accountId: monoAcc.id.isNotEmpty ? monoAcc.id : '0',
         from: from,
         to: now,
+        maxChunks: 12,
       );
 
       for (final item in statements) {

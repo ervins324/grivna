@@ -266,6 +266,32 @@ class SettingsScreen extends ConsumerWidget {
               ),
             ),
 
+            const SizedBox(height: 20),
+
+            // Section: Danger Zone / Delete All Data
+            _buildSectionHeader('DANGER ZONE'),
+            Container(
+              margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 6),
+              decoration: BoxDecoration(
+                color: AppColors.surface,
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(color: AppColors.negative.withValues(alpha: 0.3)),
+              ),
+              child: ListTile(
+                title: const Text('Delete All Data', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14, color: AppColors.negative)),
+                subtitle: const Text('Wipe all accounts, transactions, subscriptions, and credentials', style: TextStyle(fontSize: 12, color: AppColors.textTertiary)),
+                leading: Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: AppColors.negative.withValues(alpha: 0.1),
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(Icons.delete_forever, color: AppColors.negative, size: 20),
+                ),
+                onTap: () => _confirmDeleteAllData(context, ref),
+              ),
+            ),
+
             const SizedBox(height: 24),
 
             // Architecture & Offline Info
@@ -353,6 +379,56 @@ class SettingsScreen extends ConsumerWidget {
           ],
         ),
       ),
+    );
+  }
+
+  void _confirmDeleteAllData(BuildContext context, WidgetRef ref) {
+    showDialog(
+      context: context,
+      builder: (dialogCtx) {
+        return AlertDialog(
+          backgroundColor: AppColors.surface,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+          title: const Row(
+            children: [
+              Icon(Icons.warning_amber_rounded, color: AppColors.negative, size: 24),
+              SizedBox(width: 10),
+              Text('Delete All Data?', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+            ],
+          ),
+          content: const Text(
+            'This will permanently delete all accounts, transactions, subscriptions, and stored API credentials from your device.\n\nThis action cannot be undone.',
+            style: TextStyle(fontSize: 13, color: AppColors.textSecondary, height: 1.4),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(dialogCtx),
+              child: const Text('Cancel', style: TextStyle(color: AppColors.textSecondary)),
+            ),
+            ElevatedButton(
+              onPressed: () async {
+                Navigator.pop(dialogCtx);
+                await ref.read(accountRepositoryProvider).clearAllData();
+                ref.read(selectedAccountFilterProvider.notifier).setFilter(null);
+                if (context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('All data has been deleted from the app'),
+                      backgroundColor: AppColors.negative,
+                    ),
+                  );
+                }
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.negative,
+                foregroundColor: Colors.white,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              ),
+              child: const Text('Delete Everything'),
+            ),
+          ],
+        );
+      },
     );
   }
 }

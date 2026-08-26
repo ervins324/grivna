@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../accounts/presentation/add_account_sheet.dart';
+import '../../accounts/providers/account_providers.dart';
 import '../../settings/providers/settings_provider.dart';
 import 'widgets/account_cards_carousel.dart';
 import 'widgets/quick_manual_entry_sheet.dart';
@@ -78,9 +79,29 @@ class DashboardScreen extends ConsumerWidget {
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
                 child: UnifiedBalanceHeader(
-                  onAddExpense: () => QuickManualEntrySheet.show(context, initialType: 'expense'),
-                  onAddIncome: () => QuickManualEntrySheet.show(context, initialType: 'income'),
-                  onTransfer: () => TransferFundsSheet.show(context),
+                  onAddExpense: () {
+                    final selectedFilter = ref.read(selectedAccountFilterProvider);
+                    QuickManualEntrySheet.show(
+                      context,
+                      initialType: 'expense',
+                      initialAccountId: selectedFilter,
+                    );
+                  },
+                  onAddIncome: () {
+                    final selectedFilter = ref.read(selectedAccountFilterProvider);
+                    QuickManualEntrySheet.show(
+                      context,
+                      initialType: 'income',
+                      initialAccountId: selectedFilter,
+                    );
+                  },
+                  onTransfer: () {
+                    final selectedFilter = ref.read(selectedAccountFilterProvider);
+                    TransferFundsSheet.show(
+                      context,
+                      initialFromAccountId: selectedFilter,
+                    );
+                  },
                 ),
               ),
 

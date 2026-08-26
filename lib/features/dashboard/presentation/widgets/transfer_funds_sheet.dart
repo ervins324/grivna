@@ -6,9 +6,14 @@ import '../../../../core/database/app_database.dart';
 import '../../../accounts/providers/account_providers.dart';
 
 class TransferFundsSheet extends ConsumerStatefulWidget {
-  const TransferFundsSheet({super.key});
+  final String? initialFromAccountId;
 
-  static Future<void> show(BuildContext context) {
+  const TransferFundsSheet({
+    super.key,
+    this.initialFromAccountId,
+  });
+
+  static Future<void> show(BuildContext context, {String? initialFromAccountId}) {
     return showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -16,7 +21,7 @@ class TransferFundsSheet extends ConsumerStatefulWidget {
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
       ),
-      builder: (_) => const TransferFundsSheet(),
+      builder: (_) => TransferFundsSheet(initialFromAccountId: initialFromAccountId),
     );
   }
 
@@ -93,10 +98,19 @@ class _TransferFundsSheetState extends ConsumerState<TransferFundsSheet> {
   Widget build(BuildContext context) {
     final accounts = ref.watch(accountsStreamProvider).value ?? [];
     final usdRate = ref.watch(exchangeRateStreamProvider).value ?? 41.50;
+    final selectedFilter = ref.watch(selectedAccountFilterProvider);
 
-    if (accounts.length >= 2) {
-      _fromAccountId ??= accounts[0].id;
-      _toAccountId ??= accounts[1].id;
+    if (_fromAccountId == null && accounts.isNotEmpty) {
+      final preferredFrom = widget.initialFromAccountId ?? selectedFilter;
+      if (preferredFrom != null && accounts.any((a) => a.id == preferredFrom)) {
+        _fromAccountId = preferredFrom;
+      } else {
+        _fromAccountId = accounts[0].id;
+      }
+
+      if (_toAccountId == null && accounts.length > 1) {
+        _toAccountId = accounts.firstWhere((a) => a.id != _fromAccountId).id;
+      }
     }
 
     AccountsTableData? fromAcc;

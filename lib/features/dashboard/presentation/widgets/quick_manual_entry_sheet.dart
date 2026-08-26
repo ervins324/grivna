@@ -7,13 +7,19 @@ import '../../../accounts/providers/account_providers.dart';
 
 class QuickManualEntrySheet extends ConsumerStatefulWidget {
   final String initialType; // 'expense' or 'income'
+  final String? initialAccountId;
 
   const QuickManualEntrySheet({
     super.key,
     this.initialType = 'expense',
+    this.initialAccountId,
   });
 
-  static Future<void> show(BuildContext context, {String initialType = 'expense'}) {
+  static Future<void> show(
+    BuildContext context, {
+    String initialType = 'expense',
+    String? initialAccountId,
+  }) {
     return showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -21,7 +27,10 @@ class QuickManualEntrySheet extends ConsumerStatefulWidget {
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
       ),
-      builder: (_) => QuickManualEntrySheet(initialType: initialType),
+      builder: (_) => QuickManualEntrySheet(
+        initialType: initialType,
+        initialAccountId: initialAccountId,
+      ),
     );
   }
 
@@ -61,6 +70,7 @@ class _QuickManualEntrySheetState extends ConsumerState<QuickManualEntrySheet> {
   void initState() {
     super.initState();
     _type = widget.initialType;
+    _selectedAccountId = widget.initialAccountId;
     _selectedCategory = _type == 'expense' ? 'Groceries' : 'Salary';
   }
 
@@ -131,9 +141,19 @@ class _QuickManualEntrySheetState extends ConsumerState<QuickManualEntrySheet> {
   @override
   Widget build(BuildContext context) {
     final accounts = ref.watch(accountsStreamProvider).value ?? [];
+    final selectedFilter = ref.watch(selectedAccountFilterProvider);
+
     if (_selectedAccountId == null && accounts.isNotEmpty) {
-      _selectedAccountId = accounts.first.id;
-      _currency = AppCurrency.fromCode(accounts.first.currency);
+      if (selectedFilter != null && accounts.any((a) => a.id == selectedFilter)) {
+        _selectedAccountId = selectedFilter;
+      } else {
+        _selectedAccountId = accounts.first.id;
+      }
+      final acc = accounts.firstWhere((a) => a.id == _selectedAccountId);
+      _currency = AppCurrency.fromCode(acc.currency);
+    } else if (_selectedAccountId != null && accounts.any((a) => a.id == _selectedAccountId)) {
+      final acc = accounts.firstWhere((a) => a.id == _selectedAccountId);
+      _currency = AppCurrency.fromCode(acc.currency);
     }
 
     final categories = _type == 'expense' ? _expenseCategories : _incomeCategories;

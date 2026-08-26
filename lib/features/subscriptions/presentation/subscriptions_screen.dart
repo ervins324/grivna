@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_typography.dart';
+import '../../accounts/providers/account_providers.dart';
 import '../providers/subscription_providers.dart';
 import 'widgets/add_subscription_sheet.dart';
 import 'widgets/future_cost_calculator.dart';
@@ -21,7 +22,7 @@ class SubscriptionsScreen extends ConsumerWidget {
         backgroundColor: AppColors.background,
         elevation: 0,
         centerTitle: false,
-        title: Text('Subscriptions & Forecast', style: AppTypography.titleLarge),
+        title: Text('Subscriptions', style: AppTypography.titleLarge),
         actions: [
           IconButton(
             icon: const Icon(Icons.add, color: AppColors.textPrimary),
@@ -69,8 +70,8 @@ class SubscriptionsScreen extends ConsumerWidget {
                   ),
                   subsAsync.when(
                     data: (subs) => Text(
-                      '${subs.where((s) => s.isActive).length} active',
-                      style: AppTypography.bodySmall,
+                      '${subs.where((s) => s.isActive).length} active • Swipe to delete',
+                      style: AppTypography.bodySmall.copyWith(fontSize: 11),
                     ),
                     loading: () => const SizedBox.shrink(),
                     error: (_, _) => const SizedBox.shrink(),
@@ -112,7 +113,40 @@ class SubscriptionsScreen extends ConsumerWidget {
                   itemCount: subs.length,
                   separatorBuilder: (_, _) => const SizedBox(height: 10),
                   itemBuilder: (context, index) {
-                    return SubscriptionCard(subscription: subs[index]);
+                    final sub = subs[index];
+                    return Dismissible(
+                      key: Key('sub_${sub.id}'),
+                      direction: DismissDirection.endToStart,
+                      background: Container(
+                        padding: const EdgeInsets.only(right: 20),
+                        alignment: Alignment.centerRight,
+                        decoration: BoxDecoration(
+                          color: AppColors.negative,
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: const Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            Text(
+                              'Delete',
+                              style: TextStyle(color: Colors.white, fontWeight: FontWeight.w700, fontSize: 13),
+                            ),
+                            SizedBox(width: 8),
+                            Icon(Icons.delete_outline, color: Colors.white, size: 22),
+                          ],
+                        ),
+                      ),
+                      onDismissed: (_) {
+                        ref.read(accountRepositoryProvider).deleteSubscription(sub.id);
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text('Deleted subscription: ${sub.name}'),
+                            duration: const Duration(seconds: 2),
+                          ),
+                        );
+                      },
+                      child: SubscriptionCard(subscription: sub),
+                    );
                   },
                 );
               },

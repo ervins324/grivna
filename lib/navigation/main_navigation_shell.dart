@@ -62,7 +62,7 @@ class _MainNavigationShellState extends ConsumerState<MainNavigationShell> {
               children: [
                 _buildNavItem(0, Icons.grid_view_outlined, Icons.grid_view_rounded, 'Dashboard'),
                 _buildNavItem(1, Icons.pie_chart_outline, Icons.pie_chart, 'Analytics'),
-                _buildNavItem(2, Icons.autorenew_outlined, Icons.autorenew, 'Forecast'),
+                _buildNavItem(2, Icons.autorenew_outlined, Icons.autorenew, 'Subscriptions'),
                 _buildNavItem(3, Icons.tune_outlined, Icons.tune, 'Settings'),
               ],
             ),

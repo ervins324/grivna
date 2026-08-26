@@ -197,7 +197,7 @@ class _RecentTransactionsListState extends ConsumerState<RecentTransactionsList>
                               tx.type == 'transfer'
                                   ? CurrencyFormatter.format(tx.amount, currency: curr)
                                   : CurrencyFormatter.format(
-                                      tx.amount,
+                                      tx.type == 'expense' ? -tx.amount : tx.amount,
                                       currency: curr,
                                       includePlusSign: true,
                                     ),

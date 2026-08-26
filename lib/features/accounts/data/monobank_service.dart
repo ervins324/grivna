@@ -159,6 +159,47 @@ class MonobankService {
     }
   }
 
+  /// Fetch multi-month transactions statement by querying successive 30-day windows
+  Future<List<MonobankStatementItem>> getExtendedStatement({
+    required String apiToken,
+    required String accountId,
+    required DateTime from,
+    DateTime? to,
+    int maxChunks = 12,
+  }) async {
+    final results = <MonobankStatementItem>[];
+    final seenIds = <String>{};
+    var currentTo = to ?? DateTime.now();
+
+    for (int i = 0; i < maxChunks; i++) {
+      if (currentTo.isBefore(from)) break;
+      var currentFrom = currentTo.subtract(const Duration(days: 30));
+      if (currentFrom.isBefore(from)) currentFrom = from;
+
+      try {
+        final chunk = await getStatement(
+          apiToken: apiToken,
+          accountId: accountId,
+          from: currentFrom,
+          to: currentTo,
+        );
+
+        for (final item in chunk) {
+          if (seenIds.add(item.id)) {
+            results.add(item);
+          }
+        }
+
+        currentTo = currentFrom.subtract(const Duration(seconds: 1));
+      } catch (_) {
+        break;
+      }
+    }
+
+    results.sort((a, b) => b.time.compareTo(a.time));
+    return results;
+  }
+
   /// Fetch public currency rates (no token required)
   Future<List<Map<String, dynamic>>> getPublicCurrencies() async {
     try {

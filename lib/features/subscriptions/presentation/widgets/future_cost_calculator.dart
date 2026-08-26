@@ -66,48 +66,88 @@ class FutureCostCalculator extends ConsumerWidget {
           ),
           const SizedBox(height: 16),
 
-          // Horizon Chips Selector (1m, 3m, 6m, 12m)
+          // Horizon Chips Selector (1m, 3m, 6m, 12m, Custom)
           Row(
-            children: [1, 3, 6, 12].map((months) {
-              final isSelected = horizonMonths == months;
-              return Expanded(
+            children: [
+              ...[1, 3, 6, 12].map((months) {
+                final isSelected = horizonMonths == months && (ref.watch(forecastHorizonDaysProvider) == months * 30 || (months == 12 && ref.watch(forecastHorizonDaysProvider) == 365));
+                return Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 2),
+                    child: InkWell(
+                      onTap: () => ref.read(forecastHorizonDaysProvider.notifier).setMonths(months),
+                      borderRadius: BorderRadius.circular(12),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(vertical: 8),
+                        decoration: BoxDecoration(
+                          color: isSelected ? AppColors.textPrimary : AppColors.surfaceElevated,
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(
+                            color: isSelected ? AppColors.neonBorder.withValues(alpha: 0.6) : AppColors.border,
+                          ),
+                          boxShadow: isSelected
+                              ? [
+                                  BoxShadow(
+                                    color: Colors.white.withValues(alpha: 0.15),
+                                    blurRadius: 10,
+                                  ),
+                                ]
+                              : null,
+                        ),
+                        child: Center(
+                          child: Text(
+                            '${months}m',
+                            style: TextStyle(
+                              fontSize: 11,
+                              fontWeight: FontWeight.w600,
+                              color: isSelected ? AppColors.background : AppColors.textSecondary,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                );
+              }),
+              // Custom Period Chip
+              Expanded(
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 3),
+                  padding: const EdgeInsets.symmetric(horizontal: 2),
                   child: InkWell(
-                    onTap: () => ref.read(forecastHorizonMonthsProvider.notifier).setMonths(months),
+                    onTap: () => _showCustomPeriodDialog(context, ref),
                     borderRadius: BorderRadius.circular(12),
                     child: Container(
                       padding: const EdgeInsets.symmetric(vertical: 8),
                       decoration: BoxDecoration(
-                        color: isSelected ? AppColors.textPrimary : AppColors.surfaceElevated,
+                        color: ![30, 90, 180, 360, 365].contains(ref.watch(forecastHorizonDaysProvider))
+                            ? AppColors.neonGreen
+                            : AppColors.surfaceElevated,
                         borderRadius: BorderRadius.circular(12),
                         border: Border.all(
-                          color: isSelected ? AppColors.neonBorder.withValues(alpha: 0.6) : AppColors.border,
+                          color: ![30, 90, 180, 360, 365].contains(ref.watch(forecastHorizonDaysProvider))
+                              ? AppColors.neonGreen
+                              : AppColors.border,
                         ),
-                        boxShadow: isSelected
-                            ? [
-                                BoxShadow(
-                                  color: Colors.white.withValues(alpha: 0.15),
-                                  blurRadius: 10,
-                                ),
-                              ]
-                            : null,
                       ),
                       child: Center(
                         child: Text(
-                          '$months ${months == 1 ? 'Month' : 'Months'}',
+                          ![30, 90, 180, 360, 365].contains(ref.watch(forecastHorizonDaysProvider))
+                              ? '${ref.watch(forecastHorizonDaysProvider)}d'
+                              : 'Custom',
                           style: TextStyle(
                             fontSize: 11,
-                            fontWeight: FontWeight.w600,
-                            color: isSelected ? AppColors.background : AppColors.textSecondary,
+                            fontWeight: FontWeight.w700,
+                            color: ![30, 90, 180, 360, 365].contains(ref.watch(forecastHorizonDaysProvider))
+                                ? Colors.black
+                                : AppColors.textSecondary,
                           ),
                         ),
                       ),
                     ),
                   ),
                 ),
-              );
-            }).toList(),
+              ),
+            ],
           ),
 
           const SizedBox(height: 20),
@@ -115,6 +155,10 @@ class FutureCostCalculator extends ConsumerWidget {
           // Total Projection Banner
           projectionAsync.when(
             data: (proj) {
+              final label = proj.days >= 30 && proj.days % 30 == 0
+                  ? '${(proj.days / 30).round()} months'
+                  : '${proj.days} days';
+
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -132,7 +176,7 @@ class FutureCostCalculator extends ConsumerWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'Total Projected Spend ($horizonMonths mo)',
+                              'Total Projected Spend ($label)',
                               style: AppTypography.bodySmall,
                             ),
                             const SizedBox(height: 4),
@@ -229,6 +273,128 @@ class FutureCostCalculator extends ConsumerWidget {
           ),
         ],
       ),
+    );
+  }
+
+  void _showCustomPeriodDialog(BuildContext context, WidgetRef ref) {
+    final currentDays = ref.read(forecastHorizonDaysProvider);
+    final controller = TextEditingController(text: currentDays.toString());
+    bool isMonths = currentDays >= 30 && currentDays % 30 == 0;
+    if (isMonths) {
+      controller.text = (currentDays ~/ 30).toString();
+    }
+
+    showDialog(
+      context: context,
+      builder: (dialogCtx) {
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return AlertDialog(
+              backgroundColor: AppColors.surface,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+              title: Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: AppColors.neonGreenSubtle,
+                      shape: BoxShape.circle,
+                    ),
+                    child: const Icon(Icons.tune, color: AppColors.neonGreen, size: 18),
+                  ),
+                  const SizedBox(width: 10),
+                  const Text('Custom Forecast Period', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                ],
+              ),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  const Text('Enter duration to calculate total recurring subscription costs:', style: TextStyle(fontSize: 12, color: AppColors.textSecondary)),
+                  const SizedBox(height: 16),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: TextField(
+                          controller: controller,
+                          keyboardType: TextInputType.number,
+                          autofocus: true,
+                          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: AppColors.textPrimary),
+                          decoration: InputDecoration(
+                            labelText: isMonths ? 'Number of Months' : 'Number of Days',
+                            filled: true,
+                            fillColor: AppColors.surfaceElevated,
+                            border: OutlineInputBorder(borderRadius: BorderRadius.circular(14)),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Container(
+                        decoration: BoxDecoration(
+                          color: AppColors.surfaceElevated,
+                          borderRadius: BorderRadius.circular(14),
+                          border: Border.all(color: AppColors.border),
+                        ),
+                        child: Row(
+                          children: [
+                            InkWell(
+                              onTap: () => setState(() => isMonths = true),
+                              borderRadius: BorderRadius.circular(12),
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 14),
+                                decoration: BoxDecoration(
+                                  color: isMonths ? AppColors.textPrimary : Colors.transparent,
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                child: Text('Mo', style: TextStyle(fontWeight: FontWeight.bold, color: isMonths ? AppColors.background : AppColors.textSecondary)),
+                              ),
+                            ),
+                            InkWell(
+                              onTap: () => setState(() => isMonths = false),
+                              borderRadius: BorderRadius.circular(12),
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 14),
+                                decoration: BoxDecoration(
+                                  color: !isMonths ? AppColors.textPrimary : Colors.transparent,
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                child: Text('Days', style: TextStyle(fontWeight: FontWeight.bold, color: !isMonths ? AppColors.background : AppColors.textSecondary)),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(dialogCtx),
+                  child: const Text('Cancel', style: TextStyle(color: AppColors.textSecondary)),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    final val = int.tryParse(controller.text.trim()) ?? 1;
+                    if (isMonths) {
+                      ref.read(forecastHorizonDaysProvider.notifier).setMonths(val);
+                    } else {
+                      ref.read(forecastHorizonDaysProvider.notifier).setDays(val);
+                    }
+                    Navigator.pop(dialogCtx);
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.textPrimary,
+                    foregroundColor: AppColors.background,
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  ),
+                  child: const Text('Apply Projection'),
+                ),
+              ],
+            );
+          },
+        );
+      },
     );
   }
 }
