@@ -37,7 +37,7 @@ class FutureCostCalculator extends ConsumerWidget {
                       shape: BoxShape.circle,
                       boxShadow: AppColors.neonGlow(blur: 8, color: AppColors.neonGreenGlow),
                     ),
-                    child: const Icon(Icons.auto_graph, size: 14, color: AppColors.neonGreen),
+                    child: Icon(Icons.auto_graph, size: 14, color: AppColors.neonGreen),
                   ),
                   const SizedBox(width: 8),
                   Text(
@@ -57,7 +57,7 @@ class FutureCostCalculator extends ConsumerWidget {
                   borderRadius: BorderRadius.circular(6),
                   border: Border.all(color: AppColors.neonBorder.withValues(alpha: 0.3)),
                 ),
-                child: const Text(
+                child: Text(
                   'Simulation',
                   style: TextStyle(fontSize: 10, fontWeight: FontWeight.w600, color: AppColors.neonGreen),
                 ),
@@ -263,9 +263,9 @@ class FutureCostCalculator extends ConsumerWidget {
                 ],
               );
             },
-            loading: () => const Center(
+            loading: () => Center(
               child: Padding(
-                padding: EdgeInsets.all(24),
+                padding: const EdgeInsets.all(24),
                 child: CircularProgressIndicator(strokeWidth: 2, color: AppColors.neonGreen),
               ),
             ),
@@ -300,7 +300,7 @@ class FutureCostCalculator extends ConsumerWidget {
                       color: AppColors.neonGreenSubtle,
                       shape: BoxShape.circle,
                     ),
-                    child: const Icon(Icons.tune, color: AppColors.neonGreen, size: 18),
+                    child: Icon(Icons.tune, color: AppColors.neonGreen, size: 18),
                   ),
                   const SizedBox(width: 10),
                   const Text('Custom Forecast Period', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),

@@ -399,12 +399,12 @@ class _AddAccountSheetState extends ConsumerState<AddAccountSheet>
                 ),
                 child: Row(
                   children: [
-                    const Icon(Icons.check_circle_outline, size: 18, color: AppColors.positive),
+                    Icon(Icons.check_circle_outline, size: 18, color: AppColors.positive),
                     const SizedBox(width: 8),
                     Expanded(
                       child: Text(
                         _successMessage!,
-                        style: const TextStyle(fontSize: 12, color: AppColors.positive, fontWeight: FontWeight.w600),
+                        style: TextStyle(fontSize: 12, color: AppColors.positive, fontWeight: FontWeight.w600),
                       ),
                     ),
                   ],
@@ -490,7 +490,7 @@ class _AddAccountSheetState extends ConsumerState<AddAccountSheet>
         const SizedBox(height: 8),
         OutlinedButton.icon(
           onPressed: _monoLoading ? null : _createDemoMonobank,
-          icon: const Icon(Icons.flash_on, size: 16, color: AppColors.neonGreen),
+          icon: Icon(Icons.flash_on, size: 16, color: AppColors.neonGreen),
           label: const Text('Add Demo Monobank Account (Fast Test)', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 12, color: AppColors.textPrimary)),
           style: OutlinedButton.styleFrom(
             side: const BorderSide(color: AppColors.border),

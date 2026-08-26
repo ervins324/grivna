@@ -144,7 +144,7 @@ class UnifiedBalanceHeader extends ConsumerWidget {
                               child: Row(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
-                                  const Icon(Icons.bolt, size: 12, color: AppColors.neonGreen),
+                                  Icon(Icons.bolt, size: 12, color: AppColors.neonGreen),
                                   const SizedBox(width: 4),
                                   Text(
                                     '1 USD ≈ ${state.usdRate.toStringAsFixed(2)} UAH',
@@ -167,8 +167,8 @@ class UnifiedBalanceHeader extends ConsumerWidget {
                       ],
                     );
                   },
-                  loading: () => const Padding(
-                    padding: EdgeInsets.symmetric(vertical: 8),
+                  loading: () => Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 8),
                     child: SizedBox(
                       height: 44,
                       child: Center(
@@ -207,7 +207,7 @@ class UnifiedBalanceHeader extends ConsumerWidget {
                                     shape: BoxShape.circle,
                                     boxShadow: AppColors.neonGlow(blur: 10, color: AppColors.neonGreenGlow),
                                   ),
-                                  child: const Icon(Icons.arrow_downward, color: AppColors.neonGreen, size: 14),
+                                  child: Icon(Icons.arrow_downward, color: AppColors.neonGreen, size: 14),
                                 ),
                                 const SizedBox(width: 8),
                                 Column(

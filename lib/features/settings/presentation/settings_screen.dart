@@ -7,7 +7,9 @@ import '../../accounts/presentation/add_account_sheet.dart';
 import '../../accounts/providers/account_providers.dart';
 import '../../auth_guard/presentation/pin_setup_sheet.dart';
 import '../../auth_guard/providers/auth_state_provider.dart';
+import '../providers/personalisation_provider.dart';
 import '../providers/settings_provider.dart';
+import 'personalisation_sheet.dart';
 
 class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({super.key});
@@ -19,6 +21,7 @@ class SettingsScreen extends ConsumerWidget {
     final syncState = ref.watch(syncNotifierProvider);
     final accounts = ref.watch(accountsStreamProvider).value ?? [];
     final usdRate = ref.watch(exchangeRateStreamProvider).value ?? 41.50;
+    final personalisation = ref.watch(personalisationProvider);
 
     return Scaffold(
       backgroundColor: AppColors.background,
@@ -26,7 +29,7 @@ class SettingsScreen extends ConsumerWidget {
         backgroundColor: AppColors.background,
         elevation: 0,
         centerTitle: false,
-        title: Text('Settings & Accounts', style: AppTypography.titleLarge),
+        title: Text('Settings', style: AppTypography.titleLarge),
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -63,6 +66,114 @@ class SettingsScreen extends ConsumerWidget {
                       title: 'US Dollar (USD)',
                       symbol: '\$',
                       isSelected: baseCurrency == AppCurrency.usd,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            const SizedBox(height: 20),
+
+            // Section: Personalisation
+            _buildSectionHeader('PERSONALISATION'),
+            Container(
+              margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 6),
+              decoration: BoxDecoration(
+                color: AppColors.surface,
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(color: AppColors.border),
+              ),
+              child: Column(
+                children: [
+                  ListTile(
+                    title: const Text('Theme & Typography', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14)),
+                    subtitle: Text(
+                      'Font: ${personalisation.fontFamily}',
+                      style: AppTypography.bodySmall,
+                    ),
+                    leading: Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: personalisation.accentColor.withValues(alpha: 0.15),
+                        shape: BoxShape.circle,
+                      ),
+                      child: Icon(Icons.palette_outlined, color: personalisation.accentColor, size: 20),
+                    ),
+                    trailing: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Container(
+                          width: 18,
+                          height: 18,
+                          decoration: BoxDecoration(
+                            color: personalisation.accentColor,
+                            shape: BoxShape.circle,
+                            boxShadow: [
+                              BoxShadow(
+                                color: personalisation.accentColor.withValues(alpha: 0.4),
+                                blurRadius: 6,
+                              ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(width: 6),
+                        const Icon(Icons.chevron_right, color: AppColors.textTertiary, size: 20),
+                      ],
+                    ),
+                    onTap: () => PersonalisationSheet.show(context),
+                  ),
+                  const Divider(color: AppColors.borderSubtle, height: 1),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                    child: Row(
+                      children: [
+                        const Text(
+                          'Quick Accent:',
+                          style: TextStyle(fontSize: 12, color: AppColors.textTertiary, fontWeight: FontWeight.w500),
+                        ),
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: SingleChildScrollView(
+                            scrollDirection: Axis.horizontal,
+                            child: Row(
+                              children: PersonalisationNotifier.accentPresets.take(6).map((preset) {
+                                final isSelected = personalisation.accentColor.toARGB32() == preset.color.toARGB32();
+                                return Padding(
+                                  padding: const EdgeInsets.only(right: 8),
+                                  child: InkWell(
+                                    onTap: () {
+                                      ref.read(personalisationProvider.notifier).setAccentColor(preset.color);
+                                    },
+                                    borderRadius: BorderRadius.circular(10),
+                                    child: Container(
+                                      width: 26,
+                                      height: 26,
+                                      decoration: BoxDecoration(
+                                        color: preset.color,
+                                        shape: BoxShape.circle,
+                                        border: isSelected
+                                            ? Border.all(color: Colors.white, width: 2)
+                                            : Border.all(color: AppColors.border, width: 1),
+                                        boxShadow: isSelected
+                                            ? [
+                                                BoxShadow(
+                                                  color: preset.color.withValues(alpha: 0.4),
+                                                  blurRadius: 8,
+                                                ),
+                                              ]
+                                            : null,
+                                      ),
+                                      child: isSelected
+                                          ? const Icon(Icons.check, size: 14, color: Colors.black)
+                                          : null,
+                                    ),
+                                  ),
+                                );
+                              }).toList(),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ],
@@ -251,7 +362,7 @@ class SettingsScreen extends ConsumerWidget {
                         color: AppColors.surfaceElevated,
                         shape: BoxShape.circle,
                       ),
-                      child: const Icon(Icons.auto_awesome, color: AppColors.positive, size: 20),
+                      child: Icon(Icons.auto_awesome, color: AppColors.positive, size: 20),
                     ),
                     onTap: () async {
                       await ref.read(syncNotifierProvider.notifier).seedDemo();

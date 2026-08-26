@@ -14,28 +14,31 @@ class AppColors {
   static const Color borderSubtle = Color(0xFF1A1A20);
   static const Color borderFocused = Color(0xFFFAFAFA);
 
-  // Soft Green Neon Light Palette
-  static const Color neonGreen = Color(0xFF00FF87);          // Vivid soft green neon
-  static const Color neonGreenBright = Color(0xFF4EFEA1);    // Bright neon highlight
-  static const Color neonGreenMuted = Color(0xFF00B359);     // Controlled neon
-  static const Color neonGreenGlow = Color(0x3300FF87);      // Soft diffuse ambient glow
-  static const Color neonGreenGlowStrong = Color(0x6600FF87);// Focused glow
-  static const Color neonGreenSubtle = Color(0x1400FF87);    // Background tint
-  static const Color neonBorder = Color(0x5500FF87);         // Glowing border
+  // Dynamic Accent Color (default Neon Matrix)
+  static Color currentAccent = const Color(0xFF00FF87);
+
+  // Soft Neon Light Palette
+  static Color get neonGreen => currentAccent;
+  static Color get neonGreenBright => currentAccent.withValues(alpha: 0.9);
+  static Color get neonGreenMuted => currentAccent.withValues(alpha: 0.7);
+  static Color get neonGreenGlow => currentAccent.withValues(alpha: 0.2);
+  static Color get neonGreenGlowStrong => currentAccent.withValues(alpha: 0.4);
+  static Color get neonGreenSubtle => currentAccent.withValues(alpha: 0.1);
+  static Color get neonBorder => currentAccent.withValues(alpha: 0.35);
 
   // Text hierarchy
   static const Color textPrimary = Color(0xFFFAFAFA);   // Pure white/zinc 50
   static const Color textSecondary = Color(0xFFA1A1AA); // Zinc 400
   static const Color textTertiary = Color(0xFF71717A);  // Zinc 500
   static const Color textMuted = Color(0xFF52525B);     // Zinc 600
-  static const Color textNeon = Color(0xFF00FF87);      // Neon accent text
+  static Color get textNeon => currentAccent;
 
   // High contrast accent
   static const Color accent = Color(0xFFFAFAFA);
   static const Color accentSubtle = Color(0xFF27272A);
 
   // Financial Accents
-  static const Color positive = Color(0xFF00FF87);      // Neon green for positive cashflow
+  static Color get positive => currentAccent;
   static const Color positiveMuted = Color(0xFF05472A); // Deep emerald shadow
   static const Color negative = Color(0xFFFF3366);      // Crisp neon rose
   static const Color negativeMuted = Color(0xFF590E20); // Rose shadow
@@ -45,21 +48,21 @@ class AppColors {
   static const Color monobank = Color(0xFF161618);      // Monobank dark theme card
   static const Color monobankAccent = Color(0xFFFAFAFA);
   static const Color bybit = Color(0xFFF7A600);         // Bybit Gold
-  static const Color cash = Color(0xFF00FF87);          // Neon Cash
+  static Color get cash => currentAccent;
   static const Color manual = Color(0xFF8B5CF6);        // Purple Manual
 
   // Soft Neon Box Shadows
-  static List<BoxShadow> neonGlow({double blur = 18, double spread = 0, Color color = neonGreenGlow}) => [
+  static List<BoxShadow> neonGlow({double blur = 18, double spread = 0, Color? color}) => [
     BoxShadow(
-      color: color,
+      color: color ?? neonGreenGlow,
       blurRadius: blur,
       spreadRadius: spread,
     ),
   ];
 
-  static List<BoxShadow> softCardGlow({Color color = const Color(0x1F00FF87)}) => [
+  static List<BoxShadow> softCardGlow({Color? color}) => [
     BoxShadow(
-      color: color,
+      color: color ?? currentAccent.withValues(alpha: 0.12),
       blurRadius: 24,
       spreadRadius: -4,
       offset: const Offset(0, 4),

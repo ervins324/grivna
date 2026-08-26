@@ -52,7 +52,7 @@ class AccountCardsCarousel extends ConsumerWidget {
                         ),
                       ),
                       const SizedBox(width: 6),
-                      const Text(
+                      Text(
                         'Clear filter (Show all)',
                         style: TextStyle(
                           fontSize: 12,
@@ -85,7 +85,7 @@ class AccountCardsCarousel extends ConsumerWidget {
                 },
               );
             },
-            loading: () => const Center(
+            loading: () => Center(
               child: SizedBox(
                 width: 24,
                 height: 24,

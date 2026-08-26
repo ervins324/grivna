@@ -195,9 +195,9 @@ class SixMonthTrendLineChart extends ConsumerWidget {
                 ),
               );
             },
-            loading: () => const Center(
+            loading: () => Center(
               child: Padding(
-                padding: EdgeInsets.all(32),
+                padding: const EdgeInsets.all(32),
                 child: CircularProgressIndicator(strokeWidth: 2, color: AppColors.neonGreen),
               ),
             ),

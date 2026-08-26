@@ -60,7 +60,7 @@ class _AppLockScreenState extends ConsumerState<AppLockScreen> {
                 border: Border.all(color: AppColors.neonGreen, width: 1.5),
                 boxShadow: AppColors.neonGlow(blur: 24, spread: 2, color: AppColors.neonGreenGlow),
               ),
-              child: const Center(
+              child: Center(
                 child: Text(
                   '₴',
                   style: TextStyle(
@@ -122,8 +122,8 @@ class _AppLockScreenState extends ConsumerState<AppLockScreen> {
               onPressed: () {
                 ref.read(authGuardProvider.notifier).unlockDirectly();
               },
-              icon: const Icon(Icons.lock_open, size: 16, color: AppColors.neonGreen),
-              label: const Text(
+              icon: Icon(Icons.lock_open, size: 16, color: AppColors.neonGreen),
+              label: Text(
                 'Unlock App',
                 style: TextStyle(color: AppColors.neonGreen, fontWeight: FontWeight.w600, fontSize: 13),
               ),

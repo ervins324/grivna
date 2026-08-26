@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'core/constants/app_colors.dart';
 import 'features/accounts/providers/account_providers.dart';
+import 'features/settings/providers/personalisation_provider.dart';
 import 'features/settings/providers/settings_provider.dart';
 import 'navigation/main_navigation_shell.dart';
 
@@ -54,6 +55,8 @@ class _GrivnaAppState extends ConsumerState<GrivnaApp> {
 
   @override
   Widget build(BuildContext context) {
+    final personalisation = ref.watch(personalisationProvider);
+
     return MaterialApp(
       title: 'grivna',
       debugShowCheckedModeBanner: false,
@@ -61,9 +64,9 @@ class _GrivnaAppState extends ConsumerState<GrivnaApp> {
       darkTheme: ThemeData(
         brightness: Brightness.dark,
         scaffoldBackgroundColor: AppColors.background,
-        primaryColor: AppColors.neonGreen,
-        colorScheme: const ColorScheme.dark(
-          primary: AppColors.neonGreen,
+        primaryColor: personalisation.accentColor,
+        colorScheme: ColorScheme.dark(
+          primary: personalisation.accentColor,
           secondary: AppColors.textSecondary,
           surface: AppColors.surface,
         ),

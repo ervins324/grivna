@@ -70,7 +70,7 @@ class DailySpendingBarChart extends ConsumerWidget {
                           final dayNum = days[groupIndex].day;
                           return BarTooltipItem(
                             'Day $dayNum: ${CurrencyFormatter.format(rod.toY, currency: baseCurrency, showDecimals: false)}',
-                            const TextStyle(
+                            TextStyle(
                               color: AppColors.neonGreen,
                               fontWeight: FontWeight.bold,
                               fontSize: 11,
@@ -130,9 +130,9 @@ class DailySpendingBarChart extends ConsumerWidget {
                 ),
               );
             },
-            loading: () => const Center(
+            loading: () => Center(
               child: Padding(
-                padding: EdgeInsets.all(32),
+                padding: const EdgeInsets.all(32),
                 child: CircularProgressIndicator(strokeWidth: 2, color: AppColors.neonGreen),
               ),
             ),

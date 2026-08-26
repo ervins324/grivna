@@ -35,7 +35,7 @@ class UpcomingTimelineWidget extends ConsumerWidget {
                       shape: BoxShape.circle,
                       boxShadow: AppColors.neonGlow(blur: 8, color: AppColors.neonGreenGlow),
                     ),
-                    child: const Icon(Icons.notifications_active_outlined, size: 14, color: AppColors.neonGreen),
+                    child: Icon(Icons.notifications_active_outlined, size: 14, color: AppColors.neonGreen),
                   ),
                   const SizedBox(width: 8),
                   Text(
@@ -169,9 +169,9 @@ class UpcomingTimelineWidget extends ConsumerWidget {
                 },
               );
             },
-            loading: () => const Center(
+            loading: () => Center(
               child: Padding(
-                padding: EdgeInsets.all(24),
+                padding: const EdgeInsets.all(24),
                 child: CircularProgressIndicator(strokeWidth: 2, color: AppColors.neonGreen),
               ),
             ),
