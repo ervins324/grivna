@@ -162,32 +162,41 @@ class _RecentTransactionsListState extends ConsumerState<RecentTransactionsList>
                               Row(
                                 children: [
                                   if (account != null) ...[
-                                    Container(
-                                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                                      decoration: BoxDecoration(
-                                        color: AppColors.surfaceElevated,
-                                        borderRadius: BorderRadius.circular(6),
-                                      ),
-                                      child: Text(
-                                        account.name,
-                                        style: const TextStyle(
-                                          fontSize: 10,
-                                          fontWeight: FontWeight.w600,
-                                          color: AppColors.textSecondary,
+                                    Flexible(
+                                      child: Container(
+                                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                                        decoration: BoxDecoration(
+                                          color: AppColors.surfaceElevated,
+                                          borderRadius: BorderRadius.circular(6),
+                                        ),
+                                        child: Text(
+                                          account.name,
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: const TextStyle(
+                                            fontSize: 10,
+                                            fontWeight: FontWeight.w600,
+                                            color: AppColors.textSecondary,
+                                          ),
                                         ),
                                       ),
                                     ),
                                     const SizedBox(width: 6),
                                   ],
-                                  Text(
-                                    DateTimeUtils.formatRelativeDate(tx.timestamp),
-                                    style: AppTypography.bodySmall.copyWith(fontSize: 11),
+                                  Flexible(
+                                    child: Text(
+                                      DateTimeUtils.formatRelativeDate(tx.timestamp),
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: AppTypography.bodySmall.copyWith(fontSize: 11),
+                                    ),
                                   ),
                                 ],
                               ),
                             ],
                           ),
                         ),
+                        const SizedBox(width: 8),
 
                         // Amount
                         Column(

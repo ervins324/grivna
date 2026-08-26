@@ -114,10 +114,15 @@ class UpcomingTimelineWidget extends ConsumerWidget {
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children: [
-                                    Text(
-                                      sub.name,
-                                      style: AppTypography.titleMedium.copyWith(fontSize: 14),
+                                    Expanded(
+                                      child: Text(
+                                        sub.name,
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: AppTypography.titleMedium.copyWith(fontSize: 14),
+                                      ),
                                     ),
+                                    const SizedBox(width: 8),
                                     Text(
                                       CurrencyFormatter.format(sub.amount, currency: curr),
                                       style: AppTypography.monoAmount.copyWith(fontSize: 13),
